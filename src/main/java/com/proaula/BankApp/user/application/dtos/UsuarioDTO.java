@@ -1,4 +1,4 @@
-package com.proaula.BankApp.dtos;
+package com.proaula.BankApp.user.application.dtos;
 
 import lombok.Data;
 

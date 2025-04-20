@@ -1,4 +1,4 @@
-package com.proaula.BankApp.models;
+package com.proaula.BankApp.user.domain.models;
 
 import jakarta.persistence.*;
 import lombok.*;

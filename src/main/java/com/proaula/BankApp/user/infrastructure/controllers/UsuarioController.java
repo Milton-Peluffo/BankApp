@@ -1,8 +1,9 @@
-package com.proaula.BankApp.controllers;
+package com.proaula.BankApp.user.infrastructure.controllers;
 
-import com.proaula.BankApp.dtos.UsuarioDTO;
-import com.proaula.BankApp.models.Usuario;
-import com.proaula.BankApp.services.UsuarioService;
+import com.proaula.BankApp.user.application.dtos.UsuarioDTO;
+import com.proaula.BankApp.user.application.services.UsuarioService;
+import com.proaula.BankApp.user.domain.models.Usuario;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
