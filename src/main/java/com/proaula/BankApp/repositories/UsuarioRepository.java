@@ -1,6 +1,6 @@
-package com.proaula.BankApp.repositories;
+package com.proaula.BankApp.core.models.repositories;
 
-import com.proaula.BankApp.models.Usuario;
+import com.proaula.BankApp.core.models.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

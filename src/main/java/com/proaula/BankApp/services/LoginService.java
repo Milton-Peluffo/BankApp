@@ -1,8 +1,8 @@
-package com.proaula.BankApp.services;
+package com.proaula.BankApp.core.models.services;
 
 import com.proaula.BankApp.dtos.LoginDTO;
-import com.proaula.BankApp.models.Usuario;
-import com.proaula.BankApp.repositories.UsuarioRepository;
+import com.proaula.BankApp.core.models.Usuario;
+import com.proaula.BankApp.core.models.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
