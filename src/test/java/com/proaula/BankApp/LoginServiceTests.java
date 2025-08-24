@@ -9,9 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 
-public class MiltonLoginServiceTest {
+public class LoginServiceTests {
 
     private UsuarioRepository usuarioRepository;
     private LoginService loginService;
@@ -36,11 +35,11 @@ public class MiltonLoginServiceTest {
 
         LoginDTO dto = new LoginDTO();
         dto.setTelefono("3024442123");
-        dto.setPin("4332"); // mismo pin correcto
+        dto.setPin("4332"); // prueba con un pin correcto
 
         String resultado = loginService.login(dto);
 
-        assertEquals("login exitoso", resultado); // pasa
+        assertEquals("login exitoso", resultado);
     }
 
     // -------------------- PRUEBA, TELEFONO Y PIN INCORRECTO -----------------------
@@ -57,11 +56,11 @@ public class MiltonLoginServiceTest {
 
         LoginDTO dto = new LoginDTO();
         dto.setTelefono("3024442123");
-        dto.setPin("9999"); // pin distinto al real
+        dto.setPin("9999"); // prueba con un pin distinto al real
 
         String resultado = loginService.login(dto);
 
-        assertEquals("telefono o pin incorrecto", resultado); // pasa
+        assertEquals("telefono o pin incorrecto", resultado);
     }
 
 
