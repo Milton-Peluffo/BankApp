@@ -13,8 +13,17 @@ import java.util.Map;
 @Service
 public class LoginService {
 
+    private final UsuarioRepository usuarioRepository;
+
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    public LoginService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+    
+    // Constructor sin argumentos para compatibilidad con Spring
+    public LoginService() {
+        this.usuarioRepository = null; // Spring inyectará la dependencia
+    }
 
     private Map<String, Integer> intentosFallidos = new HashMap<>();
 
@@ -40,7 +49,7 @@ public class LoginService {
                 return "cuenta bloqueada";
             } else {
                 intentosFallidos.put(usuario.getTelefono(), intentos);
-                return "PIN incorrecto";
+                return "telefono o pin incorrecto";
             }
         }
 
