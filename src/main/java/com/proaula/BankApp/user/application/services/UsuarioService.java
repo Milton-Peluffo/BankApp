@@ -21,6 +21,16 @@ public class UsuarioService {
         if (usuarioRepository.existsByTelefono(dto.getTelefono()))
             throw new Exception("Telefono ya registrado");
 
+        if (dto.getCorreo() == null || !dto.getCorreo().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            throw new Exception("Correo inválido");
+        }
+        if (dto.getTelefono() == null || !dto.getTelefono().matches("^[0-9]{10}$")) {
+            throw new Exception("Teléfono inválido: debe tener 10 dígitos");
+        }
+        if (dto.getPin() == null || !dto.getPin().matches("\\d{4}")) {
+            throw new Exception("Pin inválido: debe ser numérico de 4 dígitos");
+        }
+
         Usuario usuario = new Usuario();
         usuario.setNombres(dto.getNombres());
         usuario.setApellidos(dto.getApellidos());
