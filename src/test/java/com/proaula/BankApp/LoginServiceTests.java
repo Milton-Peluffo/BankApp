@@ -37,7 +37,7 @@ public class LoginServiceTests {
 
         LoginDTO dto = new LoginDTO();
         dto.setTelefono("3024442123");
-        dto.setPin("4332"); // prueba con un pin correcto
+        dto.setPin("4332");
 
         String resultado = loginService.login(dto);
 
@@ -59,14 +59,18 @@ public class LoginServiceTests {
 
         LoginDTO dto = new LoginDTO();
         dto.setTelefono("3024442123");
-        dto.setPin("9999"); // prueba con un pin distinto al real
+        dto.setPin("9999");
 
         String resultado = loginService.login(dto);
 
         assertEquals("telefono o pin incorrecto", resultado);
     }
 
-    // -------------------- PRUEBA, EL PIN DEBE TENER EXACTAMENTE 4 DIGITOS -----------------------
+
+    // ============================================ PRUEBAS DEL PIN ===================================================
+
+
+    // ############ PRUEBA, EL PIN SOLO DEBE SER NUMERICO ##################
 
     @Test
     void testPinConLetrasOCaracteres() {
@@ -86,7 +90,27 @@ public class LoginServiceTests {
         assertEquals("el pin solo debe ser numerico", resultado);
     }
 
-    // ----------------------- PRUEBA, EL PIN NO DEBE ESTAR VACÍO -------------------------
+    // ############ PRUEBA, EL PIN DEBE TENER EXACTAMENTE 4 DIGITOS ############
+    @Test
+    void testPinConLongitudInvalida() {
+
+        Usuario usuario = new Usuario();
+        usuario.setTelefono("3024442123");
+        usuario.setPin("1234");
+        usuario.setBloqueado(false);
+
+        when(usuarioRepository.findByTelefono("3024442123"))
+                .thenReturn(usuario);
+
+        LoginDTO dto = new LoginDTO();
+        dto.setTelefono("3024442123");
+
+        dto.setPin("122223");
+        String resultado = loginService.login(dto);
+        assertEquals("el pin debe tener exactamente 4 digitos", resultado);
+    }
+
+    // ############ PRUEBA, EL PIN NO DEBE ESTAR VACÍO ############
 
     @Test
     void testPinVacio() {
@@ -106,7 +130,69 @@ public class LoginServiceTests {
         assertEquals("el pin no puede estar vacio", resultado);
     }
 
-    //---------------------- TEST, BLOQUE SI FALLA 3 VECES EL PIN -------------------------
+
+
+// ============================================ PRUEBAS DEL TELEFONO ===================================================
+
+    // ############ PRUEBA, EL TELEFONO NO DEBE ESTAR VACIO ############
+    @Test
+    void testTelefonoVacio() {
+        LoginDTO dto = new LoginDTO();
+        dto.setTelefono(""); // telefono vacio
+        dto.setPin("1234");
+
+        Usuario usuario = new Usuario();
+        usuario.setTelefono("3024442123");
+        usuario.setPin("1234");
+        usuario.setBloqueado(false);
+
+        when(usuarioRepository.findByTelefono("")).thenReturn(usuario);
+
+        String resultado = loginService.login(dto);
+
+        assertEquals("el telefono no puede estar vacio", resultado);
+    }
+
+    // ############ PRUEBA, EL TELEFONO SOLO DEBE SER NUMERICO ############
+    @Test
+    void testTelefonoConLetrasOCaracteres() {
+        LoginDTO dto = new LoginDTO();
+        dto.setTelefono("30244A21@3"); // telefono invalido
+        dto.setPin("1234");
+
+        Usuario usuario = new Usuario();
+        usuario.setTelefono("3024442123");
+        usuario.setPin("1234");
+        usuario.setBloqueado(false);
+
+        when(usuarioRepository.findByTelefono("30244A21@3")).thenReturn(usuario);
+
+        String resultado = loginService.login(dto);
+
+        assertEquals("el telefono solo debe ser numerico", resultado);
+    }
+
+    // ############ PRUEBA, EL TELEFONO DEBE TENER EXACTAMENTE 10 DIGITOS ############
+    @Test
+    void testTelefonoConLongitudInvalida() {
+        LoginDTO dto = new LoginDTO();
+        dto.setTelefono("12345"); // menos de 10 digitos
+        dto.setPin("1234");
+
+        Usuario usuario = new Usuario();
+        usuario.setTelefono("3024442123");
+        usuario.setPin("1234");
+        usuario.setBloqueado(false);
+
+        when(usuarioRepository.findByTelefono("12345")).thenReturn(usuario);
+
+        String resultado = loginService.login(dto);
+
+        assertEquals("el telefono debe tener exactamente 10 digitos", resultado);
+    }
+
+
+    //##################################### TEST, BLOQUEO SI FALLA 3 VECES EL PIN #################################
 
     @Test
     void testBloqueoTrasTresIntentosFallidos() {
@@ -135,5 +221,4 @@ public class LoginServiceTests {
         assertTrue(usuario.isBloqueado(), "El usuario debe quedar marcado como bloqueado");
         Mockito.verify(usuarioRepository, Mockito.times(1)).save(usuario);
     }
-
 }

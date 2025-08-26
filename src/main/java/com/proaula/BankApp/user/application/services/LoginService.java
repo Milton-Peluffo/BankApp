@@ -30,7 +30,7 @@ public class LoginService {
         Usuario usuario = usuarioRepository.findByTelefono(loginDTO.getTelefono());
 
 
-        // ----------------------------- VALIDACIONES DE LOGIN --------------------------
+        // ----------------------------- LOGIN VALIDATIONS --------------------------
 
         if (usuario == null) {
             return "telefono no registrado";
