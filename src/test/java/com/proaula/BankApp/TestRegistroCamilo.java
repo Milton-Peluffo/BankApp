@@ -26,18 +26,25 @@ class TestRegistroCamilo {
         MockitoAnnotations.openMocks(this);
     }
 
-    // ✅ Caso 1: Registro exitoso
+    // ✅ Caso 1: Registro exitoso de todos los datos.
     @Test
     void testRegistroExitoso() throws Exception {
         UsuarioDTO dto = new UsuarioDTO();
+        dto.setNombres("Camilo");
+        dto.setApellidos("Sehuanes");
+        dto.setCedula("1234567890");
         dto.setCorreo("camilo@test.com");
         dto.setTelefono("3001234567");
         dto.setPin("1234");
 
         when(usuarioRepository.existsByCorreo(dto.getCorreo())).thenReturn(false);
+        when(usuarioRepository.existsByCedula(dto.getCedula())).thenReturn(false);
         when(usuarioRepository.existsByTelefono(dto.getTelefono())).thenReturn(false);
 
         Usuario usuarioMock = new Usuario();
+        usuarioMock.setNombres(dto.getNombres());
+        usuarioMock.setApellidos(dto.getApellidos());
+        usuarioMock.setCedula(dto.getCedula());
         usuarioMock.setCorreo(dto.getCorreo());
         usuarioMock.setTelefono(dto.getTelefono());
         usuarioMock.setPin(dto.getPin());
@@ -47,6 +54,9 @@ class TestRegistroCamilo {
         Usuario resultado = usuarioService.crearUsuario(dto);
 
         assertNotNull(resultado);
+        assertEquals("Camilo", resultado.getNombres());
+        assertEquals("Sehuanes", resultado.getApellidos());
+        assertEquals("1234567890", resultado.getCedula());
         assertEquals("camilo@test.com", resultado.getCorreo());
         assertEquals("3001234567", resultado.getTelefono());
         assertEquals("1234", resultado.getPin());
