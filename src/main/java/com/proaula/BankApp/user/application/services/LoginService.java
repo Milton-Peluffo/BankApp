@@ -13,17 +13,59 @@ import java.util.Map;
 @Service
 public class LoginService {
 
+    private final UsuarioRepository usuarioRepository;
+
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    public LoginService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    public LoginService() {
+        this.usuarioRepository = null;
+    }
 
     private Map<String, Integer> intentosFallidos = new HashMap<>();
 
     public String login(LoginDTO loginDTO) {
         Usuario usuario = usuarioRepository.findByTelefono(loginDTO.getTelefono());
 
+
+        // ----------------------------- LOGIN VALIDATIONS --------------------------
+
         if (usuario == null) {
             return "telefono no registrado";
         }
+
+        //############# VALIDACIONES DEL PIN ##############
+
+        if (loginDTO.getPin() == null || loginDTO.getPin().trim().isEmpty()) {
+            return "el pin no puede estar vacio";
+        }
+
+        if (!loginDTO.getPin().matches("^[0-9]+$")) {
+            return "el pin solo debe ser numerico";
+        }
+
+        if (loginDTO.getPin().length() != 4) {
+            return "el pin debe tener exactamente 4 digitos";
+        }
+
+        //############# VALIDACIONES DEL TELEFONO ##############
+
+        if (loginDTO.getTelefono() == null || loginDTO.getTelefono().trim().isEmpty()) {
+            return "el telefono no puede estar vacio";
+        }
+
+        if (!loginDTO.getTelefono().matches("^[0-9]+$")) {
+            return "el telefono solo debe ser numerico";
+        }
+
+        if (loginDTO.getTelefono().length() != 10) {
+            return "el telefono debe tener exactamente 10 digitos";
+        }
+
+
+        //############# VALIDACION/LOGICA DE BLOQUEO DE CUENTA Y ACCESO ##############
 
         if (usuario.isBloqueado()) {
             return "cuenta bloqueada";
@@ -35,16 +77,15 @@ public class LoginService {
 
             if (intentos >= 3) {
                 usuario.setBloqueado(true);
-                usuarioRepository.save(usuario); // guardamos el estado en la BD
+                usuarioRepository.save(usuario);
                 intentosFallidos.remove(usuario.getTelefono());
                 return "cuenta bloqueada";
             } else {
                 intentosFallidos.put(usuario.getTelefono(), intentos);
-                return "PIN incorrecto";
+                return "telefono o pin incorrecto";
             }
         }
 
-        // login exitoso
         intentosFallidos.remove(usuario.getTelefono());
         return "login exitoso";
     }
