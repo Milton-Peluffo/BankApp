@@ -26,7 +26,7 @@ class TestRegistroCamilo {
         MockitoAnnotations.openMocks(this);
     }
 
-    // ✅ Caso 1: Registro exitoso de todos los datos.
+    // ✅ Caso 1: Registro exitoso de todos los datos
     @Test
     void testRegistroExitoso() throws Exception {
         UsuarioDTO dto = new UsuarioDTO();
