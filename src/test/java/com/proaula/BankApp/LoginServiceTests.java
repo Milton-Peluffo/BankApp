@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 public class LoginServiceTests {
 
@@ -30,7 +31,7 @@ public class LoginServiceTests {
         usuario.setPin("4332");
         usuario.setBloqueado(false);
 
-        Mockito.when(usuarioRepository.findByTelefono("3024442123"))
+        when(usuarioRepository.findByTelefono("3024442123"))
                 .thenReturn(usuario);
 
         LoginDTO dto = new LoginDTO();
@@ -51,7 +52,7 @@ public class LoginServiceTests {
         usuario.setPin("4332");
         usuario.setBloqueado(false);
 
-        Mockito.when(usuarioRepository.findByTelefono("3024442123"))
+        when(usuarioRepository.findByTelefono("3024442123"))
                 .thenReturn(usuario);
 
         LoginDTO dto = new LoginDTO();
@@ -63,5 +64,41 @@ public class LoginServiceTests {
         assertEquals("telefono o pin incorrecto", resultado);
     }
 
+    // -------------------- PRUEBA, EL PIN DEBE TENER EXACTAMENTE 4 DIGITOS -----------------------
 
+    @Test
+    void testPinConLetrasOCaracteres() {
+        LoginDTO dto = new LoginDTO();
+        dto.setTelefono("3024442123");
+        dto.setPin("12a4");
+
+        Usuario usuario = new Usuario();
+        usuario.setTelefono("3024442123");
+        usuario.setPin("1234");
+
+        when(usuarioRepository.findByTelefono("3024442123")).thenReturn(usuario);
+
+        String resultado = loginService.login(dto);
+
+        assertEquals("el pin solo debe ser numerico", resultado);
+    }
+
+    // ----------------------- PRUEBA, EL PIN NO DEBE ESTAR VACÍO -------------------------
+
+    @Test
+    void testPinVacio() {
+        LoginDTO dto = new LoginDTO();
+        dto.setTelefono("3024442123");
+        dto.setPin("");
+
+        Usuario usuario = new Usuario();
+        usuario.setTelefono("3024442123");
+        usuario.setPin("1234");
+
+        when(usuarioRepository.findByTelefono("3024442123")).thenReturn(usuario);
+
+        String resultado = loginService.login(dto);
+
+        assertEquals("el pin no puede estar vacio", resultado);
+    }
 }

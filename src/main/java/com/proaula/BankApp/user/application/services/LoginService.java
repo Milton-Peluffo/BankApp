@@ -19,10 +19,9 @@ public class LoginService {
     public LoginService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
-    
-    // Constructor sin argumentos para compatibilidad con Spring
+
     public LoginService() {
-        this.usuarioRepository = null; // Spring inyectará la dependencia
+        this.usuarioRepository = null;
     }
 
     private Map<String, Integer> intentosFallidos = new HashMap<>();
@@ -30,8 +29,23 @@ public class LoginService {
     public String login(LoginDTO loginDTO) {
         Usuario usuario = usuarioRepository.findByTelefono(loginDTO.getTelefono());
 
+
+        // ----------------------------- VALIDACIONES DE LOGIN --------------------------
+
         if (usuario == null) {
             return "telefono no registrado";
+        }
+
+        if (loginDTO.getPin() == null || loginDTO.getPin().trim().isEmpty()) {
+            return "el pin no puede estar vacio";
+        }
+
+        if (!loginDTO.getPin().matches("^[0-9]+$")) {
+            return "el pin solo debe ser numerico";
+        }
+
+        if (loginDTO.getPin().length() != 4) {
+            return "el pin debe tener exactamente 4 digitos";
         }
 
         if (usuario.isBloqueado()) {
@@ -44,7 +58,7 @@ public class LoginService {
 
             if (intentos >= 3) {
                 usuario.setBloqueado(true);
-                usuarioRepository.save(usuario); // guardamos el estado en la BD
+                usuarioRepository.save(usuario);
                 intentosFallidos.remove(usuario.getTelefono());
                 return "cuenta bloqueada";
             } else {
@@ -53,7 +67,6 @@ public class LoginService {
             }
         }
 
-        // login exitoso
         intentosFallidos.remove(usuario.getTelefono());
         return "login exitoso";
     }
