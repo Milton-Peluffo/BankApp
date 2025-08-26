@@ -21,6 +21,18 @@ public class UsuarioService {
         if (usuarioRepository.existsByTelefono(dto.getTelefono()))
             throw new Exception("Telefono ya registrado");
 
+
+        if (dto.getNombres() == null || !dto.getNombres().matches("^[a-zA-Z]+$")) {
+            throw new Exception("Nombre inválido");
+        }
+        if (dto.getApellidos() == null || !dto.getApellidos().matches("^[a-zA-Z]+$")) {
+            throw new Exception("Apellido inválido");
+        }
+        if (dto.getCedula() == null || !dto.getCedula().matches("^[0-9]{10,}$")) {
+            throw new Exception("Cédula inválida");
+        }
+
+
         Usuario usuario = new Usuario();
         usuario.setNombres(dto.getNombres());
         usuario.setApellidos(dto.getApellidos());
