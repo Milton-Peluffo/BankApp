@@ -36,6 +36,8 @@ public class LoginService {
             return "telefono no registrado";
         }
 
+        //############# VALIDACIONES DEL PIN ##############
+
         if (loginDTO.getPin() == null || loginDTO.getPin().trim().isEmpty()) {
             return "el pin no puede estar vacio";
         }
@@ -47,6 +49,23 @@ public class LoginService {
         if (loginDTO.getPin().length() != 4) {
             return "el pin debe tener exactamente 4 digitos";
         }
+
+        //############# VALIDACIONES DEL TELEFONO ##############
+
+        if (loginDTO.getTelefono() == null || loginDTO.getTelefono().trim().isEmpty()) {
+            return "el telefono no puede estar vacio";
+        }
+
+        if (!loginDTO.getTelefono().matches("^[0-9]+$")) {
+            return "el telefono solo debe ser numerico";
+        }
+
+        if (loginDTO.getTelefono().length() != 10) {
+            return "el telefono debe tener exactamente 10 digitos";
+        }
+
+
+        //############# VALIDACION/LOGICA DE BLOQUEO DE CUENTA Y ACCESO ##############
 
         if (usuario.isBloqueado()) {
             return "cuenta bloqueada";

@@ -26,6 +26,7 @@ public class LoginServiceTests {
 
     @Test
     void testLoginCorrecto() {
+
         Usuario usuario = new Usuario();
         usuario.setTelefono("3024442123");
         usuario.setPin("4332");
@@ -47,6 +48,7 @@ public class LoginServiceTests {
 
     @Test
     void testLoginIncorrecto() {
+
         Usuario usuario = new Usuario();
         usuario.setTelefono("3024442123");
         usuario.setPin("4332");
@@ -68,6 +70,7 @@ public class LoginServiceTests {
 
     @Test
     void testPinConLetrasOCaracteres() {
+
         LoginDTO dto = new LoginDTO();
         dto.setTelefono("3024442123");
         dto.setPin("12a4");
@@ -87,6 +90,7 @@ public class LoginServiceTests {
 
     @Test
     void testPinVacio() {
+
         LoginDTO dto = new LoginDTO();
         dto.setTelefono("3024442123");
         dto.setPin("");
@@ -101,4 +105,35 @@ public class LoginServiceTests {
 
         assertEquals("el pin no puede estar vacio", resultado);
     }
+
+    //---------------------- TEST, BLOQUE SI FALLA 3 VECES EL PIN -------------------------
+
+    @Test
+    void testBloqueoTrasTresIntentosFallidos() {
+
+        Usuario usuario = new Usuario();
+        usuario.setTelefono("3024442123");
+        usuario.setPin("4332");
+        usuario.setBloqueado(false);
+
+        Mockito.when(usuarioRepository.findByTelefono("3024442123"))
+                .thenReturn(usuario);
+
+        LoginDTO dto = new LoginDTO();
+        dto.setTelefono("3024442123");
+        dto.setPin("9999");
+
+        for (int i = 1; i <= 3; i++) {
+            String resultado = loginService.login(dto);
+            if (i < 3) {
+                assertEquals("telefono o pin incorrecto", resultado);
+            } else {
+                assertEquals("cuenta bloqueada", resultado);
+            }
+        }
+
+        assertTrue(usuario.isBloqueado(), "El usuario debe quedar marcado como bloqueado");
+        Mockito.verify(usuarioRepository, Mockito.times(1)).save(usuario);
+    }
+
 }
