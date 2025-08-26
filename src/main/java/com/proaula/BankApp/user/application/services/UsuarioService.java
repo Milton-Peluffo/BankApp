@@ -30,7 +30,20 @@ public class UsuarioService {
         if (dto.getPin() == null || !dto.getPin().matches("\\d{4}")) {
             throw new Exception("Pin inválido: debe ser numérico de 4 dígitos");
         }
+      
+        Tests-Moises.SR
+      
+        if (dto.getNombres() == null || !dto.getNombres().matches("^[a-zA-Z]+$")) {
+            throw new Exception("Nombre inválido");
+        }
+        if (dto.getApellidos() == null || !dto.getApellidos().matches("^[a-zA-Z]+$")) {
+            throw new Exception("Apellido inválido");
+        }
+        if (dto.getCedula() == null || !dto.getCedula().matches("^[0-9]{10,}$")) {
+            throw new Exception("Cédula inválida");
+        }
 
+         main
         Usuario usuario = new Usuario();
         usuario.setNombres(dto.getNombres());
         usuario.setApellidos(dto.getApellidos());
