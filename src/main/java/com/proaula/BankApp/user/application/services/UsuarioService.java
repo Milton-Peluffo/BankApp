@@ -31,8 +31,7 @@ public class UsuarioService {
             throw new Exception("Pin inválido: debe ser numérico de 4 dígitos");
         }
       
-        
-      
+
         if (dto.getNombres() == null || !dto.getNombres().matches("^[a-zA-Z]+$")) {
             throw new Exception("Nombre inválido");
         }
@@ -43,7 +42,6 @@ public class UsuarioService {
             throw new Exception("Cédula inválida");
         }
 
-         
         Usuario usuario = new Usuario();
         usuario.setNombres(dto.getNombres());
         usuario.setApellidos(dto.getApellidos());
