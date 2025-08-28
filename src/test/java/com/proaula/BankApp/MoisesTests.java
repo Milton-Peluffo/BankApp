@@ -32,31 +32,30 @@ public class MoisesTests {
             throw new RuntimeException("Error al inyectar el mock del repositorio", e);
         }
 
-
         when(usuarioRepository.existsByCorreo(any())).thenReturn(false);
         when(usuarioRepository.existsByCedula(any())).thenReturn(false);
         when(usuarioRepository.existsByTelefono(any())).thenReturn(false);
 
-
         when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> {
             Usuario u = invocation.getArgument(0);
             if (u.getUsuario_id() == null) {
-                u.setUsuario_id(1); // opcional, para simular ID generado
+                u.setUsuario_id(1);
             }
             return u;
         });
     }
 
-
+    // Metodo para crear usuario, evitando las validaciones del correo, telefono y pin
     private UsuarioDTO crearUsuarioDTO(String nombres, String apellidos, String cedula) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setNombres(nombres);
         dto.setApellidos(apellidos);
         dto.setCedula(cedula);
-
+        dto.setCorreo("correo@dominio.com");   // Correo válido para evitar validación
+        dto.setTelefono("1234567890");         // Teléfono válido para evitar validación
+        dto.setPin("1234");                    // Pin válido para evitar validación
         return dto;
     }
-
 
     @Test
     void testNombreValido() throws Exception {
@@ -69,7 +68,6 @@ public class MoisesTests {
         assertEquals("1234567890", usuario.getCedula());
     }
 
-
     @Test
     void testApellidoConNumerosInvalido() {
         UsuarioDTO dto = crearUsuarioDTO("Moises", "Salas123", "1234567890");
@@ -78,7 +76,6 @@ public class MoisesTests {
         assertEquals("Apellido inválido", ex.getMessage());
         verify(usuarioRepository, never()).save(any());
     }
-
 
     @Test
     void testNombreVacioInvalido() {
@@ -89,7 +86,6 @@ public class MoisesTests {
         verify(usuarioRepository, never()).save(any());
     }
 
-
     @Test
     void testCedulaValida() throws Exception {
         UsuarioDTO dto = crearUsuarioDTO("Moises", "Salas", "1234567890");
@@ -99,7 +95,6 @@ public class MoisesTests {
         assertEquals("1234567890", usuario.getCedula());
         verify(usuarioRepository).save(any(Usuario.class));
     }
-
 
     @Test
     void testCedulaConLetrasInvalida() {
