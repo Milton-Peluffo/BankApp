@@ -13,6 +13,11 @@ El formulario de registro incluye los siguientes campos:
 - 📱 Número de teléfono
 - 🆔 Cédula
 
+### 🧾 Características del login:
+El formulario del login incluye los siguientes campos:
+- 📱 Número de teléfono
+- 🔐 Contraseña (PIN)
+
 ## 🧪 Pruebas Unitarias
 
 Se han implementado pruebas unitarias con **JUnit** para garantizar la correcta validación del **login** y el **registro** de usuarios. Las pruebas están diseñadas para verificar los flujos de autenticación y almacenamiento de datos.
