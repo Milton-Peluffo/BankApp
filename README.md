@@ -24,5 +24,5 @@ Se han implementado pruebas unitarias con **JUnit** para garantizar la correcta 
 
 ## 📊 Generación de Reportes
 
-Para facilitar la visualización de los resultados de las pruebas unitarias, se ha configurado **Maven** para generar un reporte en formato **HTML**. Este reporte se genera automáticamente en la siguiente ruta:  
+Para facilitar la visualización de los resultados de las pruebas unitarias, se ha configurado **Maven** para generar un reporte en formato **HTML**. Este reporte se encuentra en la siguiente ruta:  
 `BankApp/test-reports/reports/surefire.html`
