@@ -1,5 +1,10 @@
 # 💼 BankApp - README
 
+#Integrantes de las pruebas unitarias
+- Milton Peluffo
+- Camilo Sehuanes
+- Moises Salas
+
 ## 📝 Descripción
 
 **BankApp** es una aplicación en desarrollo realizada en **Java 23** que simula un sistema bancario básico. En esta versión, se han implementado pruebas unitarias utilizando **JUnit** para validar el funcionamiento de las funciones de **login** y **registro** de usuarios.
