@@ -1,6 +1,6 @@
 # 💼 BankApp - README
 
-#Integrantes de las pruebas unitarias
+## Integrantes de las pruebas unitarias
 - Milton Peluffo
 - Camilo Sehuanes
 - Moises Salas
