@@ -57,7 +57,6 @@ jobs:
           name: app-jar
           path: target/*.jar
 
-
   docker:
     name: Docker Build & Run
     runs-on: ubuntu-latest
@@ -65,7 +64,13 @@ jobs:
     if: success()
     steps:
       - uses: actions/checkout@v3
+      - name: Download JAR Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jar
+          path: target
       - name: Build Docker Image
-        run: docker build -t bankapp:latest .
+        run: docker build -t bankapp:latest -f Dockerfile .
       - name: Run Docker Container
         run: docker run --rm bankapp:latest
+
