@@ -99,7 +99,7 @@ public class UsuarioServiceTests {
     @Test
     void testCedulaCorta() {
         UsuarioDTO dto = crearUsuarioValido();
-        dto.setCedula("123"); // inválida
+        dto.setCedula("123"); 
 
         Exception ex = assertThrows(Exception.class, () -> usuarioService.crearUsuario(dto));
         assertEquals("Cédula inválida", ex.getMessage());
@@ -112,5 +112,32 @@ public class UsuarioServiceTests {
 
         Exception ex = assertThrows(Exception.class, () -> usuarioService.crearUsuario(dto));
         assertEquals("Cédula inválida", ex.getMessage());
+    }
+
+    @Test
+    void testCedulaYaRegistrada() {
+        UsuarioDTO dto = crearUsuarioValido();
+        when(usuarioRepository.existsByCedula(dto.getCedula())).thenReturn(true);
+
+        Exception ex = assertThrows(Exception.class, () -> usuarioService.crearUsuario(dto));
+        assertEquals("Cedula ya registrada", ex.getMessage());
+    }
+
+    @Test
+    void testTelefonoYaRegistrado() {
+        UsuarioDTO dto = crearUsuarioValido();
+        when(usuarioRepository.existsByTelefono(dto.getTelefono())).thenReturn(true);
+
+        Exception ex = assertThrows(Exception.class, () -> usuarioService.crearUsuario(dto));
+        assertEquals("Telefono ya registrado", ex.getMessage());
+    }
+
+    @Test
+    void testCorreoYaRegistrado() {
+        UsuarioDTO dto = crearUsuarioValido();
+        when(usuarioRepository.existsByCorreo(dto.getCorreo())).thenReturn(true);
+
+        Exception ex = assertThrows(Exception.class, () -> usuarioService.crearUsuario(dto));
+        assertEquals("Correo ya registrado", ex.getMessage());
     }
 }

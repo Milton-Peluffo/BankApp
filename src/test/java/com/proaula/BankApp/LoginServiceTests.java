@@ -69,9 +69,6 @@ public class LoginServiceTests {
 
     // ============================================ PRUEBAS DEL PIN ===================================================
 
-
-    // ############ PRUEBA, EL PIN SOLO DEBE SER NUMERICO ##################
-
     @Test
     void testPinConLetrasOCaracteres() {
 
@@ -90,7 +87,6 @@ public class LoginServiceTests {
         assertEquals("el pin solo debe ser numerico", resultado);
     }
 
-    // ############ PRUEBA, EL PIN DEBE TENER EXACTAMENTE 4 DIGITOS ############
     @Test
     void testPinConLongitudInvalida() {
 
@@ -104,13 +100,11 @@ public class LoginServiceTests {
 
         LoginDTO dto = new LoginDTO();
         dto.setTelefono("3024442123");
-
         dto.setPin("122223");
+
         String resultado = loginService.login(dto);
         assertEquals("el pin debe tener exactamente 4 digitos", resultado);
     }
-
-    // ############ PRUEBA, EL PIN NO DEBE ESTAR VACÍO ############
 
     @Test
     void testPinVacio() {
@@ -131,14 +125,12 @@ public class LoginServiceTests {
     }
 
 
+    // ============================================ PRUEBAS DEL TELEFONO ===================================================
 
-// ============================================ PRUEBAS DEL TELEFONO ===================================================
-
-    // ############ PRUEBA, EL TELEFONO NO DEBE ESTAR VACIO ############
     @Test
     void testTelefonoVacio() {
         LoginDTO dto = new LoginDTO();
-        dto.setTelefono(""); // telefono vacio
+        dto.setTelefono(""); 
         dto.setPin("1234");
 
         Usuario usuario = new Usuario();
@@ -153,11 +145,10 @@ public class LoginServiceTests {
         assertEquals("el telefono no puede estar vacio", resultado);
     }
 
-    // ############ PRUEBA, EL TELEFONO SOLO DEBE SER NUMERICO ############
     @Test
     void testTelefonoConLetrasOCaracteres() {
         LoginDTO dto = new LoginDTO();
-        dto.setTelefono("30244A21@3"); // telefono invalido
+        dto.setTelefono("30244A21@3"); 
         dto.setPin("1234");
 
         Usuario usuario = new Usuario();
@@ -172,11 +163,10 @@ public class LoginServiceTests {
         assertEquals("el telefono solo debe ser numerico", resultado);
     }
 
-    // ############ PRUEBA, EL TELEFONO DEBE TENER EXACTAMENTE 10 DIGITOS ############
     @Test
     void testTelefonoConLongitudInvalida() {
         LoginDTO dto = new LoginDTO();
-        dto.setTelefono("12345"); // menos de 10 digitos
+        dto.setTelefono("12345"); 
         dto.setPin("1234");
 
         Usuario usuario = new Usuario();
@@ -192,7 +182,7 @@ public class LoginServiceTests {
     }
 
 
-    //##################################### TEST, BLOQUEO SI FALLA 3 VECES EL PIN #################################
+    // ##################################### TEST, BLOQUEO SI FALLA 3 VECES EL PIN #################################
 
     @Test
     void testBloqueoTrasTresIntentosFallidos() {
@@ -220,5 +210,42 @@ public class LoginServiceTests {
 
         assertTrue(usuario.isBloqueado(), "El usuario debe quedar marcado como bloqueado");
         Mockito.verify(usuarioRepository, Mockito.times(1)).save(usuario);
+    }
+
+    @Test
+    void testTelefonoNoRegistrado() {
+        when(usuarioRepository.findByTelefono("1111111111")).thenReturn(null);
+
+        LoginDTO dto = new LoginDTO();
+        dto.setTelefono("1111111111");
+        dto.setPin("1234");
+
+        String resultado = loginService.login(dto);
+
+        assertEquals("telefono no registrado", resultado);
+    }
+
+    @Test
+    void testUsuarioBloqueado() {
+        Usuario usuario = new Usuario();
+        usuario.setTelefono("3024442123");
+        usuario.setPin("1234");
+        usuario.setBloqueado(true);
+
+        when(usuarioRepository.findByTelefono("3024442123")).thenReturn(usuario);
+
+        LoginDTO dto = new LoginDTO();
+        dto.setTelefono("3024442123");
+        dto.setPin("1234");
+
+        String resultado = loginService.login(dto);
+
+        assertEquals("cuenta bloqueada", resultado);
+    }
+
+    @Test
+    void testConstructorVacioLoginService() {
+        LoginService service = new LoginService();
+        assertNotNull(service);
     }
 }
