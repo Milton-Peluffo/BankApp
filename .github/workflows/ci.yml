@@ -71,10 +71,16 @@ jobs:
           name: app-jar
           path: target
 
-      - name: Build Docker Image
-        run: docker build -t bankapp:latest .
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: bankapp:latest
 
       - name: Run Docker Container
         run: docker run --rm bankapp:latest
+
 
 
