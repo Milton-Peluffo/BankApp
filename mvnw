@@ -93,8 +93,8 @@ verbose() { :; }
 [ "${MVNW_VERBOSE-}" != true ] || verbose() { printf %s\\n "${1-}"; }
 
 die() {
-  printf %s\\n "$1" >&2
-  exit 1
+	printf %s\\n "$1" >&2
+	exit 1
 }
 
 trim() {
@@ -159,8 +159,10 @@ esac
 
 # prepare tmp dir
 if TMP_DOWNLOAD_DIR="$(mktemp -d)" && [ -d "$TMP_DOWNLOAD_DIR" ]; then
-  clean() { rm -rf -- "$TMP_DOWNLOAD_DIR"; }
-  trap clean HUP INT TERM EXIT
+  clean() {
+	rm -rf -- "$TMP_DOWNLOAD_DIR"
+}
+trap clean HUP INT TERM EXIT
 else
   die "cannot create temp dir"
 fi
