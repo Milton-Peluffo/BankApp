@@ -74,8 +74,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: List repo contents (debug)
+        run: ls -la
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: bankapp-build
+          paht: target/
+
       - name: Build Docker image
-        run: docker build -t bankapp:latest .
+        run: docker build -t bankapp:latest -f Dockerfile .
         
       - name: Run Docker container
         run: docker run --rm bankapp:latest
