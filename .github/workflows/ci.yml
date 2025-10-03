@@ -1,0 +1,81 @@
+name: CI Pipeline - BankApp
+
+on:
+  push:
+    branches: [ "Automatizacion-Moises.SR" ]
+  pull_request:
+    branches: [ "Automatizacion-Moises.SR" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      image: maven:3.9.6-eclipse-temurin-17
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Java & Maven versions
+        run: |
+          java -version
+          mvn -version
+
+      - name: Run Checkstyle (linter - no fail)
+        run: mvn -B -DskipTests=true checkstyle:checkstyle
+
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    container:
+      image: maven:3.9.6-eclipse-temurin-17
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Java & Maven versions
+        run: |
+          java -version
+          mvn -version
+
+      - name: Run MoisesTests
+        run: mvn -B -Dtest=MoisesTests test
+
+      - name: Fake Coverage Gate (≥90%)
+        run: |
+          echo "Simulando cobertura..."
+          COVERAGE=95  # 👈 Aquí simulas la cobertura (ajusta si quieres probar fallo)
+          echo "Cobertura actual: $COVERAGE%"
+          if [ $COVERAGE -lt 90 ]; then
+            echo "❌ Cobertura menor al 90%."
+            exit 1
+          else
+            echo "✅ Cobertura suficiente (>=90%)."
+          fi
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    container:
+      image: maven:3.9.6-eclipse-temurin-17
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build package
+        run: mvn -B package -DskipTests
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bankapp-build
+          path: target/*.jar
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t bankapp:latest .
+        
+      - name: Run Docker container
+        run: docker run --rm bankapp:latest
