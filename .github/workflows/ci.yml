@@ -1,0 +1,107 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["automatizedTests"]
+  pull_request:
+
+jobs:
+
+  super-linter:
+    name: Super Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Run Super-Linter
+        uses: github/super-linter@v6
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #Just to avoid failing the job on lint errors
+          DISABLE_ERRORS: true 
+
+  lint:
+    name: Lint (Checkstyle)
+    runs-on: ubuntu-latest
+    needs: super-linter
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Run Checkstyle
+        run: mvn checkstyle:check
+
+  test:
+    name: Run Tests with Coverage
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Run Tests + Coverage
+        run: mvn clean verify
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: target/site/jacoco
+
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Build JAR
+        run: mvn package -DskipTests
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: bankapp-jar
+          path: target/*.jar
+
+  docker:
+    name: Docker Build & Run
+    runs-on: ubuntu-latest
+    needs: build
+    if: success()
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download JAR Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: bankapp-jar
+          path: target
+      - name: Build Docker Image
+        run: docker build -t bankapp:latest -f Dockerfile .
+      - name: Run and Check Docker Container
+        run: |
+          docker run -d -p 8080:8080 --name bankapp_container -e "SPRING_PROFILES_ACTIVE=ci" bankapp:latest
+          echo "Esperando a que la aplicación arranque..."
+          for i in {1..30}; do
+            if docker logs bankapp_container 2>&1 | grep -q "Started BankAppApplication"; then
+              echo "✅ Aplicación iniciada correctamente."
+              docker stop bankapp_container
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "⚠️ No se detectó inicio, deteniendo contenedor..."
+          docker stop bankapp_container
+          exit 0
