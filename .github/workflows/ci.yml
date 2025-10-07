@@ -8,7 +8,7 @@ on:
 jobs:
 
   super-linter:
-    name: Super Linter (Código Limpio)
+    name: Super Linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
